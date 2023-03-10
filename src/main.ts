@@ -17,8 +17,8 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(3000, () => {
-    console.log('SERVER ONLINE AT PORT---------------->', 3000);
+  await app.listen(+process.env.PORT, () => {
+    console.log('SERVER ONLINE ON PORT---------------->', +process.env.PORT);
   });
 }
 bootstrap();
