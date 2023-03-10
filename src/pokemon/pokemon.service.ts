@@ -5,8 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common/exceptions';
 import { InjectModel } from '@nestjs/mongoose';
-import { isMongoId } from 'class-validator/types/decorator/decorators';
 import { isValidObjectId, Model } from 'mongoose';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity';
@@ -27,8 +27,16 @@ export class PokemonService {
     }
   }
 
-  async findAll() {
-    const pokemons = await this.pokemonModel.find();
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+    const pokemons = await this.pokemonModel
+      .find()
+      .limit(limit)
+      .skip(offset)
+      .sort({ no: 1 })
+      .select('-__v');
+    if (pokemons.length === 0)
+      throw new NotFoundException(`Pokemon not found, so sad dude!`);
     return pokemons;
   }
 
